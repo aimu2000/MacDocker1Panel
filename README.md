@@ -10,9 +10,10 @@
 
 如果你在 **macOS（Intel 或 Apple Silicon）** 上使用macOS专用脚本，可直接运行以下命令自动完成全部配置：
 
-curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1Panel/main/mac1panel.sh | zsh
-
 ```bash
+curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1Panel/main/mac1panel.sh | zsh
+```
+
 ✨ 功能包含：
 自动安装 Homebrew（如未安装）
 安装 docker CLI + colima（轻量级 Docker 后台环境）
