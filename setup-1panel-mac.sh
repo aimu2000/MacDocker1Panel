@@ -2,8 +2,8 @@
 
 # macOS 1Panel 一体化部署脚本（含安全升级）
 # 支持：安装 / 卸载 / 强制重装 / 升级 / 控制
+# 作者：aimu2000
 # 仓库：https://github.com/aimu2000/MacDocker1panel
-# 原仓库: https://github.com/purainity/docker-1panel-v2
 
 set -e
 
@@ -39,7 +39,8 @@ run_upgrade() {
   echo "=== 升级选项（默认 N，仅 Y 执行）==="
 
   # 1. 升级脚本自身
-  read -r "?是否更新本脚本？(y/N): " upgrade_script
+  echo -n "是否更新本脚本？(y/N): "
+  read -r upgrade_script
   if [[ "$upgrade_script" =~ ^[Yy]$ ]]; then
     local temp_script="/tmp/setup-1panel-new.sh"
     if curl -fsSL "$SCRIPT_URL" -o "$temp_script"; then
@@ -53,23 +54,27 @@ run_upgrade() {
   fi
 
   # 2. 更新 Homebrew
-  read -r "?是否更新 Homebrew？(y/N): " upgrade_brew
+  echo -n "是否更新 Homebrew？(y/N): "
+  read -r upgrade_brew
   if [[ "$upgrade_brew" =~ ^[Yy]$ ]]; then
     log "更新 Homebrew..."
     brew update
   fi
 
   # 3. 升级 Docker CLI 和 Colima
-  read -r "?是否升级 Docker CLI 和 Colima？(y/N): " upgrade_deps
+  echo -n "是否升级 Docker CLI 和 Colima？(y/N): "
+  read -r upgrade_deps
   if [[ "$upgrade_deps" =~ ^[Yy]$ ]]; then
     log "升级依赖..."
     brew upgrade docker colima
   fi
 
   # 4. 重新构建镜像（可选）
-  read -r "?是否重新构建 1Panel 镜像？(y/N): " rebuild_image
+  echo -n "是否重新构建 1Panel 镜像？(y/N): "
+  read -r rebuild_image
   if [[ "$rebuild_image" =~ ^[Yy]$ ]]; then
-    read -r "?请输入 GitHub 仓库（格式: owner/repo，默认 $DEFAULT_GITHUB_REPO）: " github_repo
+    echo -n "请输入 GitHub 仓库（格式: owner/repo，默认 $DEFAULT_GITHUB_REPO）: "
+    read -r github_repo
     github_repo="${github_repo:-$DEFAULT_GITHUB_REPO}"
     log "正在重建镜像（仓库: $github_repo）..."
     cd ~
@@ -233,17 +238,23 @@ start_and_wait() {
 full_cleanup() {
   echo
   echo "=== 强制重装前清理选项（默认全选 Y）==="
-  read -r "?停止并删除容器？(Y/n): " clean_container
+  echo -n "停止并删除容器？(Y/n): "
+  read -r clean_container
   clean_container="${clean_container:-Y}"
-  read -r "?删除 1Panel 数据目录？(Y/n): " clean_data
-  clean_-Y}"
-  read -r "?删除 docker-1panel-v2 镜像？(Y/n): " clean_image
+  echo -n "删除 1Panel 数据目录？(Y/n): "
+  read -r clean_data
+  clean_data="${clean_data:-Y}"
+  echo -n "删除 docker-1panel-v2 镜像？(Y/n): "
+  read -r clean_image
   clean_image="${clean_image:-Y}"
-  read -r "?卸载 Colima？(y/N): " uninstall_colima
+  echo -n "卸载 Colima？(y/N): "
+  read -r uninstall_colima
   uninstall_colima="${uninstall_colima:-N}"
-  read -r "?卸载 Docker CLI？(y/N): " uninstall_docker
+  echo -n "卸载 Docker CLI？(y/N): "
+  read -r uninstall_docker
   uninstall_docker="${uninstall_docker:-N}"
-  read -r "?删除控制脚本和开机自启？(Y/n): " clean_scripts
+  echo -n "删除控制脚本和开机自启？(Y/n): "
+  read -r clean_scripts
   clean_scripts="${clean_scripts:-Y}"
 
   if [[ "$clean_container" =~ ^[Yy]$ ]]; then
@@ -272,28 +283,34 @@ full_cleanup() {
 
 # === 安装流程 ===
 run_install() {
-  echo
-  read -r "?请输入 GitHub 仓库（格式: owner/repo，默认 $DEFAULT_GITHUB_REPO）: " github_repo
+  echo -n "请输入 GitHub 仓库（格式: owner/repo，默认 $DEFAULT_GITHUB_REPO）: "
+  read -r github_repo
   github_repo="${github_repo:-$DEFAULT_GITHUB_REPO}"
 
-  echo
-  read -r "?是否配置国内镜像加速？(Y/n，默认 Y): " use_mirror
+  echo -n "是否配置国内镜像加速？(Y/n，默认 Y): "
+  read -r use_mirror
   use_mirror="${use_mirror:-Y}"
-  [[ "$use_mirror" =~ ^[Yy]$ ]] && setup_mirror
+  if [[ "$use_mirror" =~ ^[Yy]$ ]]; then
+    setup_mirror
+  fi
 
-  echo
-  read -r "?是否克隆并构建镜像？(Y/n，默认 Y): " build_img
+  echo -n "是否克隆并构建镜像？(Y/n，默认 Y): "
+  read -r build_img
   build_img="${build_img:-Y}"
-  [[ "$build_img" =~ ^[Yy]$ ]] && build_image "$github_repo"
+  if [[ "$build_img" =~ ^[Yy]$ ]]; then
+    build_image "$github_repo"
+  fi
 
-  echo
-  read -r "?是否设置开机自启？(Y/n，默认 Y): " autostart
+  echo -n "是否设置开机自启？(Y/n，默认 Y): "
+  read -r autostart
   autostart="${autostart:-Y}"
 
   install_deps
   colima start
   create_control_script "$DEFAULT_DATA_DIR" "$DEFAULT_PANEL_PORT" "$DEFAULT_PANEL_ENTRANCE" "$DEFAULT_PANEL_USER"
-  [[ "$autostart" =~ ^[Yy]$ ]] && setup_autostart
+  if [[ "$autostart" =~ ^[Yy]$ ]]; then
+    setup_autostart
+  fi
   start_and_wait
 }
 
@@ -319,7 +336,9 @@ case $choice in
       "$CONTROL_SCRIPT" stop
       echo -n "是否保留数据 ($DEFAULT_DATA_DIR)? [y/N]: "
       read -r keep
-      [[ ! "$keep" =~ ^[Yy]$ ]] && rm -rf "$DEFAULT_DATA_DIR"
+      if [[ ! "$keep" =~ ^[Yy]$ ]]; then
+        rm -rf "$DEFAULT_DATA_DIR"
+      fi
       docker rmi docker-1panel-v2 2>/dev/null || true
       rm -f "$CONTROL_SCRIPT" "$LAUNCH_AGENT"
       launchctl unload "$LAUNCH_AGENT" 2>/dev/null || true
