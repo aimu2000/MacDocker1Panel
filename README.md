@@ -8,9 +8,9 @@
 ## 🚀 macOS 一键部署 在 Docker 容器中运行 1Panel V2（通过 DooD 方式），支持 Mac Intel / Apple Silicon M 系列芯片/OpenWRT/iStoreOS 环境。
 ## 🚀 在 [purainity/docker-1panel-v2]( https://github.com/purainity/docker-1panel-v2) 的基础上添加了macOS一键部署脚本。
 
-如果你在 **macOS（Intel 或 Apple Silicon）** 上使用本项目，可直接运行以下命令自动完成全部配置：
+如果你在 **macOS（Intel 或 Apple Silicon）** 上使用macOS专用脚本，可直接运行以下命令自动完成全部配置：
 
-curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1Panel/main/setup-1panel-mac.sh | zsh
+curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1Panel/main/mac1panel.sh | zsh
 
 ```bash
 ✨ 功能包含：
