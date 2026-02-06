@@ -9,7 +9,7 @@
 
 如果你在 **macOS（Intel 或 Apple Silicon）** 上使用本项目，可直接运行以下命令自动完成全部配置：
 
-curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1Panel/main/manage-1panel.sh | zsh
+curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1Panel/main/setup-1panel-mac.sh | zsh
 
 ```bash
 ✨ 功能包含：
