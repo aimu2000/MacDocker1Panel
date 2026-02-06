@@ -1,11 +1,12 @@
-# Docker-1Panel-V2
+# Docker-1Panel-Mac
 
 > 🍏 **macOS 用户专属一键部署方案（基于 Colima）**  
 > 无需 Docker Desktop，轻量、后台运行、支持 Intel / Apple Silicon M 系列芯片，开机自启！
 
 ---
 
-## 🚀 macOS 一键部署（推荐）MAC ARM 在 Docker 容器中运行 1Panel V2（通过 DooD 方式），支持 Mac/OpenWRT/iStoreOS 环境。ß
+## 🚀 macOS 一键部署 在 Docker 容器中运行 1Panel V2（通过 DooD 方式），支持 Mac Intel / Apple Silicon M 系列芯片/OpenWRT/iStoreOS 环境。
+## 🚀 在 [purainity/docker-1panel-v2]( https://github.com/purainity/docker-1panel-v2) 的基础上添加了macOS一键部署脚本。
 
 如果你在 **macOS（Intel 或 Apple Silicon）** 上使用本项目，可直接运行以下命令自动完成全部配置：
 
@@ -25,7 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1Panel/main/setup
 设置 Colima 开机自启（登录后自动运行）
 🔗 访问地址
 
-http://localhost:16888/aimu2000
+http://localhost:168/aimu2000
 
 📁 数据目录
 /Users/yuan/1panel-data
@@ -36,8 +37,6 @@ http://localhost:16888/aimu2000
 
 # docker-1panel-v2
 
-在 Docker 容器中运行 1Panel V2（通过 DooD 方式），支持 OpenWRT/iStoreOS 环境。
-
 ## ⚙️ 工作原理
 
 1. **模拟 systemctl**：在容器内部增加一个模拟的 systemctl 脚本，以模拟系统服务管理，满足 1Panel 对 systemctl 的依赖。
@@ -46,6 +45,7 @@ http://localhost:16888/aimu2000
 
 ## ❤️ 特别感谢
 
+- [purainity/docker-1panel-v2]( https://github.com/purainity/docker-1panel-v2)：在 Docker 容器中运行 1Panel V2（通过 DooD 方式），支持 OpenWRT/iStoreOS 环境。
 - [dph5199278/docker-1panel](https://github.com/dph5199278/docker-1panel)：提供了在 Docker 容器中运行 1Panel 的初步思路与安装方式。
 - [Xeath/1panel-in-docker](https://github.com/Xeath/1panel-in-docker)：提供了运行 1Panel V2 所需的 Docker 服务伪装脚本，解决了 1Panel 在容器中对 Docker 环境的依赖。
 - [gdraheim/docker-systemctl-replacement](https://github.com/gdraheim/docker-systemctl-replacement)：提供了在 Docker 容器内部使用 systemctl 模拟脚本的实现。
