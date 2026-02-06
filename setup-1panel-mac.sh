@@ -10,8 +10,8 @@ set -e
 # === 配置 ===
 SCRIPT_URL="https://raw.githubusercontent.com/aimu2000/MacDocker1panel/main/setup-1panel-mac.sh"
 DEFAULT_GITHUB_REPO="aimu2000/MacDocker1panel"
-DEFAULT_PANEL_USER="aimu2000"
-DEFAULT_PANEL_PORT=168
+DEFAULT_PANEL_USER="w800gl"
+DEFAULT_PANEL_PORT=16888
 DEFAULT_PANEL_ENTRANCE="aimu2000"
 DEFAULT_DATA_DIR="$HOME/1panel-data"
 CONTROL_SCRIPT="$HOME/1panel-control.sh"
