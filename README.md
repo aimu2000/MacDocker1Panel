@@ -1,3 +1,39 @@
+# Docker-1Panel-V2
+
+> 🍏 **macOS 用户专属一键部署方案（基于 Colima）**  
+> 无需 Docker Desktop，轻量、后台运行、支持 Intel / Apple Silicon M 系列芯片，开机自启！
+
+---
+
+## 🚀 macOS 一键部署（推荐）MAC ARM 在 Docker 容器中运行 1Panel V2（通过 DooD 方式），支持 Mac/OpenWRT/iStoreOS 环境。ß
+
+如果你在 **macOS（Intel 或 Apple Silicon）** 上使用本项目，可直接运行以下命令自动完成全部配置：
+
+curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1Panel/main/manage-1panel.sh | zsh
+
+```bash
+✨ 功能包含：
+自动安装 Homebrew（如未安装）
+安装 docker CLI + colima（轻量级 Docker 后台环境）
+配置国内镜像加速器（中科大 + 网易）
+克隆本仓库并构建镜像
+启动 1Panel 容器：
+用户名：aimu2000
+密码：YourStrongPass!2026（请务必在面板中修改为强密码！）
+端口：168
+安全入口：aimu2000
+设置 Colima 开机自启（登录后自动运行）
+🔗 访问地址
+
+http://localhost:16888/aimu2000
+
+📁 数据目录
+/Users/yuan/1panel-data
+
+💡 脚本源码见 install-1panel.sh
+
+
+
 # docker-1panel-v2
 
 在 Docker 容器中运行 1Panel V2（通过 DooD 方式），支持 OpenWRT/iStoreOS 环境。
