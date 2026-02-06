@@ -10,20 +10,20 @@
 # 使用方法:
 # 
 # 1. 安装模式 (交互式安装)
-#    ./setup-1panel-mac.sh
+#    ./mac1panel.sh
 # 
 # 2. 直接命令模式 (快速操作)
-#    ./setup-1panel-mac.sh start       # 启动 1Panel
-#    ./setup-1panel-mac.sh stop        # 停止 1Panel
-#    ./setup-1panel-mac.sh restart     # 重启 1Panel
-#    ./setup-1panel-mac.sh status      # 查看状态
-#    ./setup-1panel-mac.sh update      # 检查脚本更新
-#    ./setup-1panel-mac.sh version     # 显示版本信息
-#    ./setup-1panel-mac.sh stopAll     # 停止所有服务（Colima+Docker）
-#    ./setup-1panel-mac.sh startAll   # 启动所有服务（Colima+Docker）
+#    ./mac1panel.sh start       # 启动 1Panel
+#    ./mac1panel.sh stop        # 停止 1Panel
+#    ./mac1panel.sh restart     # 重启 1Panel
+#    ./mac1panel.sh status      # 查看状态
+#    ./mac1panel.sh update      # 检查脚本更新
+#    ./mac1panel.sh version     # 显示版本信息
+#    ./mac1panel.sh stopAll     # 停止所有服务（Colima+Docker）
+#    ./mac1panel.sh startAll   # 启动所有服务（Colima+Docker）
 # 
 # 3. 交互菜单模式
-#    ./setup-1panel-mac.sh             # 显示主菜单选择安装/卸载/升级等
+#    ./mac1panel.sh             # 显示主菜单选择安装/卸载/升级等
 # 
 # 主菜单选项:
 #    1) 安装 - 交互式安装 1Panel 和依赖
@@ -42,6 +42,7 @@
 set -e
 
 # === 配置 ===
+SCRIPT_NAME="mac1panel.sh"
 SCRIPT_URL="https://raw.githubusercontent.com/aimu2000/MacDocker1panel/main/mac1panel.sh"
 DEFAULT_GITHUB_REPO="aimu2000/MacDocker1panel"
 DEFAULT_PANEL_USER="aimu2000"
@@ -49,6 +50,7 @@ DEFAULT_PANEL_PORT=168
 DEFAULT_PANEL_ENTRANCE="aimu2000"
 DEFAULT_DATA_DIR="$HOME/1panel-data"
 DOCKER_DATA_DIR="$DEFAULT_DATA_DIR/1panel"
+CONTROL_SCRIPT="$HOME/.1panel-control.sh"
 LAUNCH_AGENT="$HOME/Library/LaunchAgents/local.1panel.start.plist"
 
 # === 脚本版本信息 ===
@@ -120,7 +122,7 @@ check_script_update() {
 # === 脚本更新函数 ===
 update_script() {
     log "开始更新脚本..."
-    local temp_script="/tmp/setup-1panel-new.sh"
+    local temp_script="/tmp/mac1panel-new.sh"
     
     # 备份当前脚本
     local backup_file="$HOME/1panel-script-backup-$(date +%Y%m%d%H%M%S).sh"
@@ -251,12 +253,14 @@ show_version() {
     echo "======================================================="
     echo "            macOS 1Panel 一体化部署脚本"
     echo "======================================================="
+    echo "脚本名称: $SCRIPT_NAME"
     echo "版本: $CURRENT_VERSION"
     echo "仓库: $DEFAULT_GITHUB_REPO"
     echo "默认端口: $DEFAULT_PANEL_PORT"
     echo "默认入口: $DEFAULT_PANEL_ENTRANCE"
     echo "默认用户: $DEFAULT_PANEL_USER"
     echo "数据目录: $DEFAULT_DATA_DIR"
+    echo "控制脚本: $CONTROL_SCRIPT"
     echo "======================================================="
 }
 
@@ -331,6 +335,7 @@ build_image() {
     git clone "https://github.com/$repo.git" tmp-1panel-build
     cd tmp-1panel-build
     docker build -t "docker-1panel-v2" .
+    cd ~
     rm -rf tmp-1panel-build
     log "✅ 镜像构建完成"
 }
@@ -373,7 +378,7 @@ case "\$1" in
   stop) docker stop "\$CONTAINER_NAME" 2>/dev/null || true; colima stop ;;
   restart) "\$0" stop && sleep 3 && "\$0" start ;;
   status)
-    if colima status --json 2>/dev/null | jq -r '.running // "false"' | grep -q "true"; then
+    if colima status 2>/dev/null | grep -q "running"; then
       echo "Colima: 运行中"
       if docker ps --format '{{.Names}}' | grep -q "^\${CONTAINER_NAME}\$"; then
         echo "1Panel: 运行中 (http://localhost:\$PORT/\$ENTRANCE)"
@@ -435,6 +440,141 @@ start_and_wait() {
     echo "👤 用户名: $DEFAULT_PANEL_USER"
     echo "🔑 密码: YourStrongPass!2026（请登录后立即修改！）"
     echo
+}
+
+# === 卸载函数 ===
+run_uninstall() {
+    echo "选择卸载方式:"
+    echo "1) 交互式卸载（推荐）"
+    echo "2) 强制卸载（删除所有相关文件）"
+    echo "3) 取消"
+    echo -n "请选择 [1-3]: "
+    read -r choice
+    
+    case $choice in
+        1)
+            log "开始交互式卸载..."
+            # 停止服务
+            if [ -f "$CONTROL_SCRIPT" ]; then
+                "$CONTROL_SCRIPT" stop
+            fi
+            
+            # 删除容器
+            if docker ps -a --format '{{.Names}}' 2>/dev/null | grep -q "^1panel$"; then
+                docker rm 1panel 2>/dev/null && log "✅ 1Panel 容器已删除"
+            fi
+            
+            # 删除镜像
+            if docker images --format '{{.Repository}}' 2>/dev/null | grep -q "^docker-1panel-v2$"; then
+                docker rmi docker-1panel-v2 2>/dev/null && log "✅ 1Panel 镜像已删除"
+            fi
+            
+            # 删除控制脚本
+            if [ -f "$CONTROL_SCRIPT" ]; then
+                rm -f "$CONTROL_SCRIPT" && log "✅ 控制脚本已删除"
+            fi
+            
+            # 删除开机自启
+            if [ -f "$LAUNCH_AGENT" ]; then
+                launchctl unload "$LAUNCH_AGENT" 2>/dev/null
+                rm -f "$LAUNCH_AGENT" && log "✅ 开机自启配置已删除"
+            fi
+            
+            # 询问是否删除数据目录
+            echo -n "是否删除数据目录 $DEFAULT_DATA_DIR？(y/N): "
+            read -r delete_data
+            if [[ "$delete_data" =~ ^[Yy]$ ]]; then
+                rm -rf "$DEFAULT_DATA_DIR" && log "✅ 数据目录已删除"
+            else
+                log "数据目录保留: $DEFAULT_DATA_DIR"
+            fi
+            
+            log "✅ 卸载完成"
+            ;;
+        2)
+            log "开始强制卸载..."
+            stop_all_services
+            
+            # 强制删除所有相关文件
+            docker rm -f 1panel 2>/dev/null || true
+            docker rmi -f docker-1panel-v2 2>/dev/null || true
+            rm -f "$CONTROL_SCRIPT" 2>/dev/null || true
+            launchctl unload "$LAUNCH_AGENT" 2>/dev/null || true
+            rm -f "$LAUNCH_AGENT" 2>/dev/null || true
+            rm -rf "$DEFAULT_DATA_DIR" 2>/dev/null || true
+            
+            log "✅ 强制卸载完成"
+            ;;
+        3)
+            log "取消卸载"
+            ;;
+        *)
+            error "无效选项"
+            ;;
+    esac
+}
+
+# === 强制重装函数 ===
+run_force_reinstall() {
+    log "开始强制重装..."
+    run_uninstall
+    sleep 2
+    run_install
+}
+
+# === 升级函数 ===
+run_upgrade() {
+    echo "选择升级组件:"
+    echo "1) 升级脚本本身"
+    echo "2) 升级 1Panel 镜像"
+    echo "3) 升级所有依赖（Homebrew/Docker/Colima）"
+    echo "4) 取消"
+    echo -n "请选择 [1-4]: "
+    read -r choice
+    
+    case $choice in
+        1) check_script_update ;;
+        2)
+            if check_installation; then
+                log "重新构建 1Panel 镜像..."
+                build_image "$DEFAULT_GITHUB_REPO"
+                "$CONTROL_SCRIPT" restart
+            else
+                error "1Panel 未安装，请先安装"
+            fi
+            ;;
+        3)
+            log "升级所有依赖..."
+            install_deps
+            ;;
+        4) log "取消升级" ;;
+        *) error "无效选项" ;;
+    esac
+}
+
+# === 控制函数 ===
+run_control() {
+    echo "选择控制操作:"
+    echo "1) 启动 1Panel"
+    echo "2) 停止 1Panel"
+    echo "3) 重启 1Panel"
+    echo "4) 查看状态"
+    echo "5) 启动所有服务（Colima+1Panel）"
+    echo "6) 停止所有服务（Colima+1Panel）"
+    echo "7) 取消"
+    echo -n "请选择 [1-7]: "
+    read -r choice
+    
+    case $choice in
+        1) "$CONTROL_SCRIPT" start ;;
+        2) "$CONTROL_SCRIPT" stop ;;
+        3) "$CONTROL_SCRIPT" restart ;;
+        4) "$CONTROL_SCRIPT" status ;;
+        5) start_all_services ;;
+        6) stop_all_services ;;
+        7) log "取消操作" ;;
+        *) error "无效选项" ;;
+    esac
 }
 
 # === 安装流程 ===
