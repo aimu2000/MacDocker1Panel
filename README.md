@@ -11,9 +11,9 @@
 如果你在 **macOS（Intel 或 Apple Silicon）** 上使用macOS专用脚本，可直接运行以下命令自动完成全部配置：
 
 ```bash
-
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/aimu2000/MacDocker1panel/main/mac1panel.sh)"
-
+```
+```bash
 # 下载到当前目录并运行
 curl -fsSL -o mac1panel.sh https://raw.githubusercontent.com/aimu2000/MacDocker1panel/main/mac1panel.sh && chmod +x mac1panel.sh && ./mac1panel.sh
 
