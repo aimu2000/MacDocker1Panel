@@ -54,7 +54,7 @@ CONTROL_SCRIPT="$HOME/.1panel-control.sh"
 LAUNCH_AGENT="$HOME/Library/LaunchAgents/local.1panel.start.plist"
 
 # === 脚本版本信息 ===
-CURRENT_VERSION="20260206V2.1"
+CURRENT_VERSION="20260208V2.2"
 
 # === 颜色定义 ===
 RED='\033[0;31m'
