@@ -2,8 +2,8 @@
 
 # =======================================================
 # macOS 1Panel 一体化部署脚本
-# 版本: 20260207V2.1
-# 最后更新: 2026-02-07 BY aimu2000
+# 版本: 20260209V2.3
+# 最后更新: 2026-02-09 BY aimu2000
 # 仓库: https://github.com/aimu2000/MacDocker1panel
 # =======================================================
 # 
@@ -54,7 +54,7 @@ CONTROL_SCRIPT="$HOME/.1panel-control.sh"
 LAUNCH_AGENT="$HOME/Library/LaunchAgents/local.1panel.start.plist"
 
 # === 脚本版本信息 ===
-CURRENT_VERSION="20260206V2.1"
+CURRENT_VERSION="20260209V2.3"
 
 # === 颜色定义 ===
 RED='\033[0;31m'
